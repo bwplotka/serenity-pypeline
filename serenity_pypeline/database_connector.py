@@ -1,4 +1,5 @@
 import ConfigParser
+from abc import ABCMeta
 from ConfigParser import NoSectionError, NoOptionError
 from abc import abstractmethod
 
@@ -6,9 +7,12 @@ __author__ = 'MacRomanowski'
 
 
 class DatabaseConnector(object):
+    __metaclass__ = ABCMeta
+
     DATABASES_SECTION_PARAM = "databases_connector"
     DATABASES_CONFIGURATION_PATH_PARAM = "configuration_path"
 
+    @abstractmethod
     def __init__(self, conf):
         self._config_file_path \
             = conf[DatabaseConnector.DATABASES_SECTION_PARAM][DatabaseConnector.DATABASES_CONFIGURATION_PATH_PARAM]
@@ -54,12 +58,14 @@ class DatabaseConnector(object):
     def is_ready_to_connect(self):
         return self._configuration_loaded
 
+    @abstractmethod
     def connect(self):
         """
         Connects to given database
         """
         raise NotImplementedError('user must define connect method')
 
+    @abstractmethod
     def query_data(self, query):
         """
         Execute query on database
@@ -69,6 +75,7 @@ class DatabaseConnector(object):
         """
         raise NotImplementedError('user must define query_data method')
 
+    @abstractmethod
     def write_data(self, json_data_to_write):
         """
         Write data (given as JSON) to the database
