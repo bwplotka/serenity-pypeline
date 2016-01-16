@@ -1,0 +1,12 @@
+{
+  "name": "PCA workflow",
+  "definition":
+  {
+    "start": "task1",
+    "task1": {
+      "run": "path.to.class:ClassName",
+      "onSuccess": ["List", "Of", "Tasks"],
+      "onFail": ["List", "Of", "Tasks"]
+    }
+  }
+}
