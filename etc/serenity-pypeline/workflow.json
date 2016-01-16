@@ -1,15 +1,21 @@
 {
-  "name": "PCA workflow",
+  "name": "PCA Workflow",
+  "database": "InfluxDB",
   "definition":
   {
-    "start": "task1",
-    "task1": {
-      "run": "serenity_pypeline.echo:Echo",
-      "onSuccess": ["task2"],
+    "start": "pca_data_fetch",
+    "pca_data_fetch": {
+      "run": "serenity_pypeline.pca_initial:PcaInitial",
+      "onSuccess": ["pca_calc_exec"],
       "onFail": []
     },
-    "task2": {
-      "run": "serenity_pypeline.echo:Echo",
+    "pca_calc_exec": {
+      "run": "serenity_pypeline.pca_executor:PcaExecutor",
+      "onSuccess": [],
+      "onFail": []
+    },
+    "pca_finish": {
+      "run": "serenity_pypeline.pca_finisher:PcaFinisher",
       "onSuccess": [],
       "onFail": []
     }
