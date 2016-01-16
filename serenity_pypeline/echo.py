@@ -1,6 +1,6 @@
 # Simple class for testing workflows
 
-
+# TODO: probably should be removed?
 class Echo(object):
 
     def __init__(self, *args, **kwargs):

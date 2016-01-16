@@ -12,7 +12,7 @@ class DatabaseConnector(object):
     DATABASES_SECTION_PARAM = "databases_connector"
     DATABASES_CONFIGURATION_PATH_PARAM = "configuration_path"
 
-    @abstractmethod
+    # TODO: this constructor should be enforced to be implemented in derived classes
     def __init__(self, conf):
         self._config_file_path \
             = conf[DatabaseConnector.DATABASES_SECTION_PARAM][DatabaseConnector.DATABASES_CONFIGURATION_PATH_PARAM]
