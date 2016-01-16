@@ -4,9 +4,14 @@
   {
     "start": "task1",
     "task1": {
-      "run": "path.to.class:ClassName",
-      "onSuccess": ["List", "Of", "Tasks"],
-      "onFail": ["List", "Of", "Tasks"]
+      "run": "serenity_pypeline.echo:Echo",
+      "onSuccess": ["task2"],
+      "onFail": []
+    },
+    "task2": {
+      "run": "serenity_pypeline.echo:Echo",
+      "onSuccess": [],
+      "onFail": []
     }
   }
 }
