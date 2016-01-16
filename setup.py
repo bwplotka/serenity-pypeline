@@ -8,5 +8,5 @@ setup(
     license='Apache License 2.0',
     author='plotkaba, macromanowski, dejson',
     author_email='',
-    description='Serenity Python Pipeline'
+    description='Serenity Python Pipeline', requires=['influxdb']
 )
