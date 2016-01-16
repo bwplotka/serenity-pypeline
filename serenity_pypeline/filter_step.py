@@ -12,4 +12,4 @@ class FilterStep(object):
 
     @abstractmethod
     def run(self, **kwargs):
-        raise NotImplementedError('user must define run method')
+        pass
