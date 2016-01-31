@@ -1,8 +1,11 @@
+from serenity_pypeline.logger import log
+
+
 class NotInitializedError(Exception):
     pass
 
-class Task(object):
 
+class Task(object):
     def __init__(self, classpath):
         self._klass = self._get_class(classpath)
         self._obj = None
@@ -22,7 +25,6 @@ class Task(object):
     def run(self, **kwargs):
         if self._obj is None:
             raise NotInitializedError("Class is not initialized")
-
         return self._obj.run(**kwargs)
 
     def add_success(self, obj):

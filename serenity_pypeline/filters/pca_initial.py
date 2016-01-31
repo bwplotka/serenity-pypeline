@@ -1,15 +1,16 @@
-from influxdb_connector import InfluxDbConnector
-from filter_step import FilterStep
+from serenity_pypeline.logger import log
+from serenity_pypeline.db.influxdb_connector import InfluxDbConnector
+from serenity_pypeline.db.important_consts import DATABASE_METRICS_CONF_FILE, \
+    SERENITY_METRICS_CONF_FILE, DATA_FIELD
+
 from sqlbuilder.smartsql import Q, compile
-from important_consts import DATABASE_METRICS_CONF_FILE, SERENITY_METRICS_CONF_FILE, DATA_FIELD
-
-__author__ = 'MacRomanowski'
+from serenity_pypeline.filters.filter import Filter
 
 
-class PcaInitial(FilterStep):
+class PcaInitial(Filter):
 
     def __init__(self, conf):
-        super(FilterStep, self).__init__()
+        super(PcaInitial, self).__init__(conf)
 
         # TODO: type of the database engine should be loaded from the workflow configuration file
         self._dbConnector = InfluxDbConnector(conf)

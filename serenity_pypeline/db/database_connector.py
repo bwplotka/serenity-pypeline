@@ -3,8 +3,6 @@ from abc import ABCMeta
 from ConfigParser import NoSectionError, NoOptionError
 from abc import abstractmethod
 
-__author__ = 'MacRomanowski'
-
 
 class DatabaseConnector(object):
     __metaclass__ = ABCMeta

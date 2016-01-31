@@ -1,15 +1,15 @@
 {
-  "name": "PCA workflow",
+  "name": "Simple Test Workflow",
   "definition":
   {
     "start": "task1",
     "task1": {
-      "run": "serenity_pypeline.echo:Echo",
+      "run": "serenity_pypeline.filters.echo:Echo",
       "onSuccess": ["task2"],
       "onFail": []
     },
     "task2": {
-      "run": "serenity_pypeline.echo:Echo",
+      "run": "serenity_pypeline.filters.echo:Echo",
       "onSuccess": [],
       "onFail": []
     }

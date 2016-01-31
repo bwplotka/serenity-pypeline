@@ -1,22 +1,22 @@
 import datetime
-from filter_step import FilterStep
-from influxdb_connector import InfluxDbConnector
 
-__author__ = 'MacRomanowski'
+from serenity_pypeline.logger import log
+from serenity_pypeline.db.influxdb_connector import InfluxDbConnector
+from serenity_pypeline.filters.filter import Filter
 
 
 class PcaFinisherException(Exception):
     pass
 
 
-class PcaFinisher(FilterStep):
+class PcaFinisher(Filter):
     KEY_FOR_DATA = 'data_to_insert'
     DEFAULT_CORR_PREFIX = 'corr_'
     DEFAULT_SEPARATOR = '_'
     STATUS_CODE_SUCCESSFUL = 0
 
     def __init__(self, conf):
-        super(FilterStep, self).__init__()
+        super(PcaFinisher, self).__init__(conf)
 
         # TODO: type of database engine should be loaded from the workflow configuration file
         self._dbConnector = InfluxDbConnector(conf)
