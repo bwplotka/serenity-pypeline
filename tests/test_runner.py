@@ -10,6 +10,8 @@ class PypelineTestRunner(object):
     def run(self):
         log.info("Starting Serenity Test Runner")
         for test_case in self.test_cases:
+            if 'skip' in test_case.keys():
+                continue
             for i in xrange(test_case['iterations']):
                 log.info("-------- Running " + test_case['name'] + " iter: " + \
                     str(i) + "/" + str(test_case['iterations']))
@@ -31,6 +33,15 @@ if __name__ == "__main__":
             "iterations": 2,
             "input": [
                 getSerializedUsage(),
+                getSerializedUsage()
+            ],
+            "skip": 1
+        },
+        {
+            "name": "PCA workflow ",
+            "workflow": "./pca_workflow.json",
+            "iterations": 1,
+            "input": [
                 getSerializedUsage()
             ]
         }
