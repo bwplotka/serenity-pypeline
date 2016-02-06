@@ -11,8 +11,18 @@ class PcaExecutor(Filter):
         super(PcaExecutor, self).__init__(conf)
 
     def run(self, **kwargs):
-        data_to_test = kwargs[DATA_FIELD]
         log.info('Counting PCA...')
 
-    def _calculate_corr_matrix(self, input_matrix):
-        return np.corrcoef(input_matrix)
+        input_matrix = []
+        data_to_test = kwargs[DATA_FIELD]
+        for key, val in data_to_test.iteritems():
+            g = val.get_points()
+            l = list(g)
+            log.info(str(key) + " has length " + str(len(l)))
+            l = [x['value'] for x in l]
+            input_matrix.append(l)
+
+        corr_matrix = np.corrcoef(input_matrix)
+
+        log.info(corr_matrix)
+        return corr_matrix
