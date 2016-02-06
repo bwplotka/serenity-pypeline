@@ -18,7 +18,8 @@ class PcaFinisher(Filter):
     def __init__(self, conf):
         super(PcaFinisher, self).__init__(conf)
 
-        # TODO: type of database engine should be loaded from the workflow configuration file
+        # TODO: type of database engine
+        # should be loaded from the workflow configuration file
         self._dbConnector = InfluxDbConnector(conf)
         self._dbConnector.connect()
 
@@ -29,7 +30,9 @@ class PcaFinisher(Filter):
             self._insert_data(kwargs[PcaFinisher.KEY_FOR_DATA])
             return PcaFinisher.STATUS_CODE_SUCCESSFUL
         else:
-            raise PcaFinisherException('No data for insert retrieved from a previous step. Failing...')
+            raise PcaFinisherException(
+                'No data for insert retrieved from a previous step. Failing...'
+            )
 
     def _insert_data(self, data_to_insert):
         current_time = datetime.datetime.now()
@@ -37,18 +40,28 @@ class PcaFinisher(Filter):
         current_time_iso = current_time.isoformat()
 
         for first_param_name, second_param_name, value in data_to_insert:
-            json_record = \
-                self._create_record_json(first_param_name, second_param_name, value, current_time_iso, current_epoch)
-            self._dbConnector.write_data(json_record)  # shouldn't it be inserted to a different database?
+            json_record = self._create_record_json(
+                first_param_name,
+                second_param_name,
+                value,
+                current_time_iso,
+                current_epoch
+            )
+            # shouldn't it be inserted to a different database?
+            self._dbConnector.write_data(json_record)
 
-    def _create_record_json(self, first_param_name, second_param_name, value, time, epoch):
-        measurement_name = PcaFinisher.DEFAULT_CORR_PREFIX + first_param_name \
-                           + PcaFinisher.DEFAULT_SEPARATOR + second_param_name
+    def _create_record_json(self, first_param_name, second_param_name,
+                            value, time, epoch):
+        measurement_name = PcaFinisher.DEFAULT_CORR_PREFIX +\
+                           first_param_name +\
+                           PcaFinisher.DEFAULT_SEPARATOR +\
+                           second_param_name
 
         record_json = {
             "measurement": measurement_name,
             "tags": {
-                "calculate_date": time  # consider some more specific tags for correlation
+                "calculate_date": time  # consider some more specific
+                                        # tags for correlation
             },
             "time": epoch,
             "field": {

@@ -21,10 +21,14 @@ class PipelineEngine(object):
         self._options = self._get_options(self._get_config())
 
         self._workflow_json = self._get_workflow()
-        self._first_task, self._workflow = self._create_workflow(self._workflow_json)
+        self._first_task, self._workflow = self._create_workflow(
+            self._workflow_json
+        )
 
         self._initialize_objects()
-        log.info("Pypeline initialized with workflow: " +  self._workflow_json['name'])
+        log.info(
+            "Pypeline initialized with workflow: " + self._workflow_json['name']
+        )
 
     def run(self, serializedUsage):
         """

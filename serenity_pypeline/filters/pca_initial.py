@@ -12,7 +12,8 @@ class PcaInitial(Filter):
     def __init__(self, conf):
         super(PcaInitial, self).__init__(conf)
 
-        # TODO: type of the database engine should be loaded from the workflow configuration file
+        # TODO: type of the database engine
+        # should be loaded from the workflow configuration file
         self._dbConnector = InfluxDbConnector(conf)
         self._dbConnector.connect()
         self._result = None
@@ -26,9 +27,15 @@ class PcaInitial(Filter):
         # ... will be updated by database data
         metrics_to_query = self._get_which_metrics_query()
         for metric, field in metrics_to_query.iteritems():
-            # TODO: How big set of data we should analyze? In the meaning of time (where statement)
-            query_to_execute = compile(Q().tables('"' + metric + '"').fields(field).where("time > now() - 10m"))
-            database_output = self._get_data_from_database(self._format_query_to_string(query_to_execute))
+            # TODO: How big set of data we should analyze?
+            # In the meaning of time (where statement)
+            query_to_execute = compile(
+                Q().tables('"' + metric + '"').
+                    fields(field).where("time > now() - 10m")
+            )
+            database_output = self._get_data_from_database(
+                self._format_query_to_string(query_to_execute)
+            )
             data_to_test[metric] = database_output
 
         self._result[DATA_FIELD] = data_to_test

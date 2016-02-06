@@ -12,8 +12,10 @@ class DatabaseConnector(object):
 
     # TODO: this constructor should be enforced to be implemented in derived classes
     def __init__(self, conf):
-        self._config_file_path \
-            = conf[DatabaseConnector.DATABASES_SECTION_PARAM][DatabaseConnector.DATABASES_CONFIGURATION_PATH_PARAM]
+        db_section = conf[DatabaseConnector.DATABASES_SECTION_PARAM]
+        self._config_file_path = db_section[
+            DatabaseConnector.DATABASES_CONFIGURATION_PATH_PARAM
+        ]
 
         # Init of further used variables
         self._configuration_loaded = False
@@ -42,7 +44,8 @@ class DatabaseConnector(object):
 
     def _read_configuration_option(self, option):
         try:
-            return self._get_configuration_parser().get(self._get_section_name(), option)
+            return self._get_configuration_parser().\
+                get(self._get_section_name(), option)
         except (NoSectionError, NoOptionError) as e:
             print 'Configuration file is incomplete.', e
 

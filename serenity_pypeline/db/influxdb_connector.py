@@ -1,4 +1,4 @@
-from influxdb.influxdb08 import InfluxDBClient
+from influxdb import InfluxDBClient
 from influxdb.exceptions import InfluxDBServerError, InfluxDBClientError
 from database_connector import DatabaseConnector, DatabaseConnectionException
 

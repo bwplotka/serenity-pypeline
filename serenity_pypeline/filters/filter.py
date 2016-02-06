@@ -1,5 +1,6 @@
 from abc import abstractmethod, ABCMeta
 
+
 class Filter(object):
     __metaclass__ = ABCMeta
 
