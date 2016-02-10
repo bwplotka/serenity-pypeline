@@ -14,6 +14,7 @@ class PcaExecutor(Filter):
         log.info('Counting PCA...')
 
         input_matrix = []
+        key_list = []
         data_to_test = kwargs[DATA_FIELD]
         for key, val in data_to_test.iteritems():
             g = val.get_points()
@@ -21,8 +22,24 @@ class PcaExecutor(Filter):
             log.info(str(key) + " has length " + str(len(l)))
             l = [x['value'] for x in l]
             input_matrix.append(l)
+            key_list.append(key)
 
         corr_matrix = np.corrcoef(input_matrix)
 
         log.info(corr_matrix)
-        return corr_matrix
+        return {'data_to_insert': self._prepare_data(key_list, corr_matrix.tolist())}
+
+    def _prepare_data(self, key_list, corr_matrix):
+        result = {}
+        for key in key_list:
+            index = key_list.index(key)
+            result[key] = {}
+
+            for val in corr_matrix[index]:
+                val_index = corr_matrix[index].index(val)
+                if val_index != index:
+                    result[key][key_list[val_index]] = val
+
+        log.info(result)
+        return result
+

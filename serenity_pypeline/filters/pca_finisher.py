@@ -26,6 +26,7 @@ class PcaFinisher(Filter):
         self._result = None
 
     def run(self, **kwargs):
+        import ipdb; ipdb.set_trace()
         if kwargs.has_key(PcaFinisher.KEY_FOR_DATA):
             self._insert_data(kwargs[PcaFinisher.KEY_FOR_DATA])
             return PcaFinisher.STATUS_CODE_SUCCESSFUL
@@ -35,36 +36,26 @@ class PcaFinisher(Filter):
             )
 
     def _insert_data(self, data_to_insert):
-        current_time = datetime.datetime.now()
-        current_epoch = int(current_time.strftime("%s")) * 1000
-        current_time_iso = current_time.isoformat()
+        result = []
+        for name, data in data_to_insert.iteritems():
+            for key, val in data.iteritems():
+                json_record = self._create_record_json(
+                    name,
+                    key,
+                    val
+                )
+                # shouldn't it be inserted to a different database?
+                result.append(json_record)
+        self._dbConnector.write_data(result)
 
-        for first_param_name, second_param_name, value in data_to_insert:
-            json_record = self._create_record_json(
-                first_param_name,
-                second_param_name,
-                value,
-                current_time_iso,
-                current_epoch
-            )
-            # shouldn't it be inserted to a different database?
-            self._dbConnector.write_data(json_record)
-
-    def _create_record_json(self, first_param_name, second_param_name,
-                            value, time, epoch):
-        measurement_name = PcaFinisher.DEFAULT_CORR_PREFIX +\
-                           first_param_name +\
-                           PcaFinisher.DEFAULT_SEPARATOR +\
-                           second_param_name
+    def _create_record_json(self, name, tag, value):
 
         record_json = {
-            "measurement": measurement_name,
+            "measurement": name+"_corr",
             "tags": {
-                "calculate_date": time  # consider some more specific
-                                        # tags for correlation
+                "corr_with" : tag
             },
-            "time": epoch,
-            "field": {
+            "fields": {
                 "values": value
             }
         }
