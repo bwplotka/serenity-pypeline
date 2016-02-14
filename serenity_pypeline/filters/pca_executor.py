@@ -27,7 +27,8 @@ class PcaExecutor(Filter):
         corr_matrix = np.corrcoef(input_matrix)
 
         log.info(corr_matrix)
-        return {'data_to_insert': self._prepare_data(key_list, corr_matrix.tolist())}
+        return {'data_to_insert': self._prepare_data(key_list,
+                                                     corr_matrix.tolist())}
 
     def _prepare_data(self, key_list, corr_matrix):
         result = {}
@@ -37,8 +38,7 @@ class PcaExecutor(Filter):
 
             for val in corr_matrix[index]:
                 val_index = corr_matrix[index].index(val)
-                if val_index != index:
-                    result[key][key_list[val_index]] = val
+                result[key][key_list[val_index]] = val
 
         log.info(result)
         return result

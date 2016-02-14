@@ -26,8 +26,7 @@ class PcaFinisher(Filter):
         self._result = None
 
     def run(self, **kwargs):
-        import ipdb; ipdb.set_trace()
-        if kwargs.has_key(PcaFinisher.KEY_FOR_DATA):
+        if PcaFinisher.KEY_FOR_DATA in kwargs:
             self._insert_data(kwargs[PcaFinisher.KEY_FOR_DATA])
             return PcaFinisher.STATUS_CODE_SUCCESSFUL
         else:
@@ -50,13 +49,17 @@ class PcaFinisher(Filter):
 
     def _create_record_json(self, name, tag, value):
 
+        name = name.replace('/', '_')
+        tag = tag.replace('/', '_')
+
         record_json = {
-            "measurement": name+"_corr",
+            "measurement": "correlations",
             "tags": {
-                "corr_with" : tag
+                "corr_name": name,
+                "corr_with": tag
             },
             "fields": {
-                "values": value
+                "value": value
             }
         }
 
