@@ -1,4 +1,4 @@
-import datetime
+import datetime, math
 
 from serenity_pypeline.logger import log
 from serenity_pypeline.db.influxdb_connector import InfluxDbConnector
@@ -41,6 +41,9 @@ class PcaFinisher(Filter):
         result = []
         for name, data in data_to_insert.iteritems():
             for key, val in data.iteritems():
+                if math.isnan(val):
+                    val = 0.0
+
                 json_record = self._create_record_json(
                     measurement,
                     name,

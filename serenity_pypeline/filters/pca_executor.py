@@ -17,6 +17,7 @@ class PcaExecutor(Filter):
         key_list = []
         data_to_test = kwargs[DATA_FIELD]
 
+        spotted_length = -1
         for key, val in data_to_test.iteritems():
             points = list(val[0].get_points())
             if len(points) == 0:
@@ -25,6 +26,11 @@ class PcaExecutor(Filter):
             values = self._post_effect_output(points, val[1])
             log.debug("Last value in series:" + str(values[-1]))
             log.info(str(key) + " has length " + str(len(values)))
+            if spotted_length == -1:
+                spotted_length = len(values)
+            elif spotted_length != len(values):
+                raise ValueError("Measurements have different lengths!")
+
             input_matrix.append(values)
             key_list.append(key)
 
@@ -49,7 +55,7 @@ class PcaExecutor(Filter):
                 output[i]['value'] *= field["mul"]
 
             if output[i]['value'] == 0.0:
-                output[i]['value'] = 0.00001
+                output[i]['value'] = 1.0
 
             values.append(output[i]['value'])
 

@@ -6,7 +6,7 @@ from serenity_pypeline.db.important_consts import DATABASE_METRICS_CONF_FILE, \
 from sqlbuilder.smartsql import Q, compile
 from serenity_pypeline.filters.filter import Filter
 
-TIME_FROM_NOW = "2h"
+TIME_FROM_NOW = "1h"
 
 class PcaInitial(Filter):
 
@@ -41,8 +41,7 @@ class PcaInitial(Filter):
 
             log.debug(self._format_query_to_string(query_to_execute))
             database_output = self._get_data_from_database(
-                self._format_query_to_string(query_to_execute)
-            )
+                self._format_query_to_string(query_to_execute))
 
             data_to_test[metric] = (database_output, fields)
 
