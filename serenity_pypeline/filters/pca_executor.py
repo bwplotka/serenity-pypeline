@@ -19,6 +19,9 @@ class PcaExecutor(Filter):
 
         for key, val in data_to_test.iteritems():
             points = list(val[0].get_points())
+            if len(points) == 0:
+                log.error("No data points for measurement: " + str(key))
+                continue
             values = self._post_effect_output(points, val[1])
             log.debug("Last value in series:" + str(values[-1]))
             log.info(str(key) + " has length " + str(len(values)))
@@ -33,10 +36,6 @@ class PcaExecutor(Filter):
                 'measurement': 'correlations'}
 
     def _post_effect_output(self, output, field):
-        if not field["post_effect_needed"]:
-            # We need to remove first value (to have the same number of values as cumulated metrics)
-            return [float(x['value']) for x in output[1:]]
-
         values = list()
         for i in xrange(0, len(output)):
             output[i]['value'] = float(output[i]['value'])
@@ -50,7 +49,7 @@ class PcaExecutor(Filter):
                 output[i]['value'] *= field["mul"]
 
             if output[i]['value'] == 0.0:
-                output[i]['value'] = 0.000001
+                output[i]['value'] = 0.00001
 
             values.append(output[i]['value'])
 

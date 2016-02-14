@@ -6,6 +6,7 @@ from serenity_pypeline.db.important_consts import DATABASE_METRICS_CONF_FILE, \
 from sqlbuilder.smartsql import Q, compile
 from serenity_pypeline.filters.filter import Filter
 
+TIME_FROM_NOW = "2h"
 
 class PcaInitial(Filter):
 
@@ -31,7 +32,7 @@ class PcaInitial(Filter):
         for metric, fields in metrics_to_query.iteritems():
             # TODO: How big set of data we should analyze?
             # In the meaning of time (where statement)
-            where_clause = "time > now() - 1h" +\
+            where_clause = "time > now() - " + TIME_FROM_NOW +\
             " and source = \'%s\'" % self.source
             query_to_execute = compile(
                 Q().tables('"' + metric + '"').
