@@ -42,7 +42,9 @@ class PcaFinisher(Filter):
         for name, data in data_to_insert.iteritems():
             for key, val in data.iteritems():
                 if math.isnan(val):
-                    val = 0.0
+                    val = 0.00001
+                elif val == 0.0:
+                    val = 0.00001
 
                 json_record = self._create_record_json(
                     measurement,
