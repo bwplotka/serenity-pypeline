@@ -11,13 +11,12 @@ class PcaExecutor(Filter):
         super(PcaExecutor, self).__init__(conf)
 
     def run(self, **kwargs):
-        log.info('Counting PCA...')
-
         input_matrix = []
         key_list = []
         data_to_test = kwargs[DATA_FIELD]
 
         spotted_length = -1
+        log.info('Counting PCA... from ' + str(len(data_to_test)) + " dimensions.")
         for key, val in data_to_test.iteritems():
             points = list(val[0].get_points())
             if len(points) == 0:
