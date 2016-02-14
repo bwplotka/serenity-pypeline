@@ -27,19 +27,22 @@ class PcaInitial(Filter):
 
         # ... will be updated by database data
         metrics_to_query = self._get_which_metrics_query()
-        for metric, field in metrics_to_query.iteritems():
+        log.debug(metrics_to_query)
+        for metric, fields in metrics_to_query.iteritems():
             # TODO: How big set of data we should analyze?
             # In the meaning of time (where statement)
             where_clause = "time > now() - 1h" +\
             " and source = \'%s\'" % self.source
             query_to_execute = compile(
                 Q().tables('"' + metric + '"').
-                    fields(field).where(where_clause)
+                    fields(fields["field"]).where(where_clause)
             )
-            log.info(self._format_query_to_string(query_to_execute))
+            log.debug(self._format_query_to_string(query_to_execute))
             database_output = self._get_data_from_database(
                 self._format_query_to_string(query_to_execute)
             )
+
+            #log.debug(database_output)
             data_to_test[metric] = database_output
 
         self._result[DATA_FIELD] = data_to_test
@@ -64,8 +67,21 @@ class PcaInitial(Filter):
         for record in conf_file:
             if record.startswith('#'):  # it's just a comment, move along
                 continue
+
             key_value = record.split()
-            table_field_dict[key_value[0]] = key_value[1]
+            table_field_dict[key_value[0]] = dict()
+            table_field_dict[key_value[0]]["field"] = key_value[1]
+            table_field_dict[key_value[0]]["cumulated"] = False
+            table_field_dict[key_value[0]]["save"] = False
+            table_field_dict[key_value[0]]["mul"] = 1
+            for i in xrange(1, (len(key_value)-1)):
+                if key_value[i] == "cumulated":
+                    table_field_dict[key_value[0]]["cumulated"] = True
+                elif key_value[i] == "save":
+                    table_field_dict[key_value[0]]["save"] = True
+                elif "mul" in key_value[i]:
+                    mul = key_value[i].split('=')
+                    table_field_dict[key_value[0]]["mul"] = mul[1]
 
         return table_field_dict
 

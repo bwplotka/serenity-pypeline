@@ -62,6 +62,8 @@ class PipelineEngine(object):
                     queue.put(t)
 
             except Exception as e:
+                import traceback
+                log.error(traceback.format_exc())
                 log.error("Exception occurred while execution tasks: " + str(e))
                 run_res = (1, e)
                 for t in task.next_error:
