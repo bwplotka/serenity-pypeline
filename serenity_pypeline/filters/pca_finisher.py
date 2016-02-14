@@ -24,6 +24,7 @@ class PcaFinisher(Filter):
         self._dbConnector.connect()
 
         self._result = None
+        self.node = conf['default']['node']
 
     def run(self, **kwargs):
         if PcaFinisher.KEY_FOR_DATA in kwargs:
@@ -53,7 +54,7 @@ class PcaFinisher(Filter):
         tag = tag.replace('/', '_')
 
         record_json = {
-            "measurement": "correlations",
+            "measurement": "correlations_" + self.node,
             "tags": {
                 "corr_name": name,
                 "corr_with": tag
