@@ -17,6 +17,7 @@ class PcaInitial(Filter):
         self._dbConnector = InfluxDbConnector(conf)
         self._dbConnector.connect()
         self._result = None
+        self.source = conf['default']['node']
 
     def run(self, **kwargs):
         self._result = kwargs
@@ -29,10 +30,13 @@ class PcaInitial(Filter):
         for metric, field in metrics_to_query.iteritems():
             # TODO: How big set of data we should analyze?
             # In the meaning of time (where statement)
+            where_clause = "time > now() - 1h" +\
+            " and source = \'%s\'" % self.source
             query_to_execute = compile(
                 Q().tables('"' + metric + '"').
-                    fields(field).where("time > now() - 10m")
+                    fields(field).where(where_clause)
             )
+            log.info(self._format_query_to_string(query_to_execute))
             database_output = self._get_data_from_database(
                 self._format_query_to_string(query_to_execute)
             )
