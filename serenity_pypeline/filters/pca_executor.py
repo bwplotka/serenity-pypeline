@@ -28,7 +28,8 @@ class PcaExecutor(Filter):
 
         log.info(corr_matrix)
         return {'data_to_insert': self._prepare_data(key_list,
-                                                     corr_matrix.tolist())}
+                                                     corr_matrix.tolist()),
+                'measurement': 'correlations'}
 
     def _prepare_data(self, key_list, corr_matrix):
         result = {}
