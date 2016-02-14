@@ -16,12 +16,13 @@ class PcaExecutor(Filter):
         input_matrix = []
         key_list = []
         data_to_test = kwargs[DATA_FIELD]
+
         for key, val in data_to_test.iteritems():
-            g = val.get_points()
-            l = list(g)
-            log.info(str(key) + " has length " + str(len(l)))
-            l = [x['value'] for x in l]
-            input_matrix.append(l)
+            points = list(val[0].get_points())
+
+            values = self._post_effect_output(points, val[1])
+            log.info(str(key) + " has length " + str(len(values)))
+            input_matrix.append(values)
             key_list.append(key)
 
         corr_matrix = np.corrcoef(input_matrix)
@@ -30,6 +31,28 @@ class PcaExecutor(Filter):
         return {'data_to_insert': self._prepare_data(key_list,
                                                      corr_matrix.tolist()),
                 'measurement': 'correlations'}
+
+    def _post_effect_output(self, output, field):
+        if not field["post_effect_needed"]:
+            # We need to remove first value (to have the same number of values as cumulated metrics)
+            return [x['value'] for x in output[1:]]
+
+        values = []
+        for i in xrange(0, len(output)):
+            output[i]['value'] = float(output[i]['value'])
+
+            if i == 0:
+                break
+
+            if field["cumulated"]:
+                output[i]['value'] -= output[i-1]['value']
+
+            if field["mul"] != 1:
+                output[i]['value'] *= field["mul"]
+
+            values.append(output[i]['value'])
+
+        return values
 
     def _prepare_data(self, key_list, corr_matrix):
         result = {}

@@ -37,16 +37,17 @@ class PcaInitial(Filter):
                 Q().tables('"' + metric + '"').
                     fields(fields["field"]).where(where_clause)
             )
+
             log.debug(self._format_query_to_string(query_to_execute))
             database_output = self._get_data_from_database(
                 self._format_query_to_string(query_to_execute)
             )
 
-            #log.debug(database_output)
-            data_to_test[metric] = database_output
+            data_to_test[metric] = (database_output, fields)
 
         self._result[DATA_FIELD] = data_to_test
         return self._result
+
 
     def _filter_data_from_serenity(self, serenity_data):
         metric_value = dict()
@@ -74,14 +75,18 @@ class PcaInitial(Filter):
             table_field_dict[key_value[0]]["cumulated"] = False
             table_field_dict[key_value[0]]["save"] = False
             table_field_dict[key_value[0]]["mul"] = 1
+            table_field_dict[key_value[0]]["post_effect_needed"] = False
             for i in xrange(1, (len(key_value)-1)):
                 if key_value[i] == "cumulated":
                     table_field_dict[key_value[0]]["cumulated"] = True
+                    table_field_dict[key_value[0]]["post_effect_needed"] = True
                 elif key_value[i] == "save":
                     table_field_dict[key_value[0]]["save"] = True
+                    table_field_dict[key_value[0]]["post_effect_needed"] = True
                 elif "mul" in key_value[i]:
                     mul = key_value[i].split('=')
-                    table_field_dict[key_value[0]]["mul"] = mul[1]
+                    table_field_dict[key_value[0]]["mul"] = float(mul[1])
+                    table_field_dict[key_value[0]]["post_effect_needed"] = True
 
         return table_field_dict
 
