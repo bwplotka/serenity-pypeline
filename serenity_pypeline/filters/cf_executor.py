@@ -17,23 +17,33 @@ class CfExecutor(Filter):
         key_list = []
         data_to_test = kwargs[DATA_FIELD]
 
-        spotted_length = -1
+        min_length = 99999999999
         for key, val in data_to_test.iteritems():
             points = list(val[0].get_points())
+
             values = self._post_effect_output(points, val[1])
             if len(values) == 0:
                 log.error("No data points for measurement: " + str(key))
                 continue
 
             log.debug("Last value in series:" + str(values[-1]))
+
             log.info(str(key) + " has length " + str(len(values)))
-            if spotted_length == -1:
-                spotted_length = len(values)
-            elif spotted_length != len(values):
-                raise ValueError("Measurements have different lengths!")
+
+            min_length = min(len(values), min_length)
 
             input_matrix.append(values)
             key_list.append(key)
+
+        for values in input_matrix:
+            if min_length < len(values):
+                differ = len(values) - min_length
+                log.debug(differ)
+                log.debug(min_length)
+                if 0 < differ <= 5:
+                    values = values[:-differ]
+                    continue
+                raise ValueError("Measurements have different lengths!")
 
         log.info('Counting Common factor... from ' + str(len(key_list)) + " dimensions.")
         # Move to Common Factor! TODO:

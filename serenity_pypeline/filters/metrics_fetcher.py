@@ -6,7 +6,7 @@ from serenity_pypeline.db.important_consts import DATABASE_METRICS_CONF_FILE, \
 from sqlbuilder.smartsql import Q, compile
 from serenity_pypeline.filters.filter import Filter
 
-TIME_FROM_NOW = "2h"
+TIME_FROM_NOW = "1h"
 
 class MetricsFetcher(Filter):
 
