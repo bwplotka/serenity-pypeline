@@ -38,8 +38,6 @@ class CfExecutor(Filter):
         for values in input_matrix:
             if min_length < len(values):
                 differ = len(values) - min_length
-                log.debug(differ)
-                log.debug(min_length)
                 if 0 < differ <= 5:
                     values = values[:-differ]
                     continue
