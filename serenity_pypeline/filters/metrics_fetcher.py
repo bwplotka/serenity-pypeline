@@ -8,10 +8,10 @@ from serenity_pypeline.filters.filter import Filter
 
 TIME_FROM_NOW = "1h"
 
-class PcaInitial(Filter):
+class MetricsFetcher(Filter):
 
     def __init__(self, conf):
-        super(PcaInitial, self).__init__(conf)
+        super(MetricsFetcher, self).__init__(conf)
 
         # TODO: type of the database engine
         # should be loaded from the workflow configuration file

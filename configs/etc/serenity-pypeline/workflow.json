@@ -1,11 +1,11 @@
 {
-  "name": "PCA Workflow",
+  "name": "PCA + CF Workflow",
   "definition":
   {
-    "start": "pca_data_fetch",
-    "pca_data_fetch": {
-      "run": "serenity_pypeline.filters.pca_initial:PcaInitial",
-      "onSuccess": ["pca_calc_exec"],
+    "start": "metrics_fetch",
+    "metrics_fetch": {
+      "run": "serenity_pypeline.filters.metrics_fetcher:MetricsFetcher",
+      "onSuccess": ["pca_calc_exec", "cf_calc_exec"],
       "onFail": []
     },
     "pca_calc_exec": {
@@ -15,6 +15,16 @@
     },
     "pca_finish": {
       "run": "serenity_pypeline.filters.pca_finisher:PcaFinisher",
+      "onSuccess": [],
+      "onFail": []
+    },
+    "cf_calc_exec": {
+      "run": "serenity_pypeline.filters.cf_executor:CfExecutor",
+      "onSuccess": ["cf_finish"],
+      "onFail": []
+    },
+    "cf_finish": {
+      "run": "serenity_pypeline.filters.cf_finisher:CfFinisher",
       "onSuccess": [],
       "onFail": []
     }

@@ -5,19 +5,19 @@ from serenity_pypeline.db.influxdb_connector import InfluxDbConnector
 from serenity_pypeline.filters.filter import Filter
 
 
-class PcaFinisherException(Exception):
+class CfFinisherException(Exception):
     pass
 
 
-class PcaFinisher(Filter):
+class CfFinisher(Filter):
     KEY_FOR_DATA = 'data_to_insert'
     KEY_NAME = 'measurement'
-    DEFAULT_CORR_PREFIX = 'corr_'
+    DEFAULT_CORR_PREFIX = 'cf_corr_'
     DEFAULT_SEPARATOR = '_'
     STATUS_CODE_SUCCESSFUL = 0
 
     def __init__(self, conf):
-        super(PcaFinisher, self).__init__(conf)
+        super(CfFinisher, self).__init__(conf)
 
         # TODO: type of database engine
         # should be loaded from the workflow configuration file
@@ -28,12 +28,14 @@ class PcaFinisher(Filter):
         self.node = conf['default']['node']
 
     def run(self, **kwargs):
-        if PcaFinisher.KEY_FOR_DATA in kwargs:
-            self._insert_data(kwargs[PcaFinisher.KEY_FOR_DATA],
-                    kwargs[PcaFinisher.KEY_NAME])
-            return PcaFinisher.STATUS_CODE_SUCCESSFUL
+        # TODO: 2 matrixes as result?
+        log.debug("CF_FINISH")
+        if CfFinisher.KEY_FOR_DATA in kwargs:
+            self._insert_data(kwargs[CfFinisher.KEY_FOR_DATA],
+                    kwargs[CfFinisher.KEY_NAME])
+            return CfFinisher.STATUS_CODE_SUCCESSFUL
         else:
-            raise PcaFinisherException(
+            raise CfFinisherException(
                 'No data for insert retrieved from a previous step. Failing...')
 
     def _insert_data(self, data_to_insert, measurement):
