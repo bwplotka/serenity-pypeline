@@ -1,5 +1,6 @@
 import numpy as np
 
+from sklearn.decomposition import FactorAnalysis
 from serenity_pypeline.logger import log
 from serenity_pypeline.db.important_consts import DATA_FIELD
 from serenity_pypeline.filters.filter import Filter
@@ -38,12 +39,22 @@ class CfExecutor(Filter):
         # Move to Common Factor! TODO:
         # corr_matrix = np.corrcoef(input_matrix)
 
-        #log.info(corr_matrix)
-        # return {CfFinisher.KEY_FOR_DATA: self._prepare_data(key_list,
-        #                                              corr_matrix.toList()),
-        #         CfFinisher.KEY_NAME: 'correlations'}
-        return {CfFinisher.KEY_FOR_DATA: {},
-                 CfFinisher.KEY_NAME: 'correlations'}
+        corrmat = np.corrcoef(input_matrix)
+        corrmat = np.nan_to_num(corrmat)
+        log.info(corrmat)
+        eigenvalues, _ = np.linalg.eig(corrmat)
+        eigenvalues = filter(lambda x: True if x > 1 else False, eigenvalues)
+        eigenvalues = [x/len(key_list) for x in eigenvalues]
+
+        input_matrix = np.array(input_matrix)
+        input_matrix = np.transpose(input_matrix)
+        factor = FactorAnalysis(n_components=len(eigenvalues)).fit(input_matrix)
+        log.info(factor.components_)
+
+        return {CfFinisher.KEY_FOR_DATA: self._prepare_data(key_list,
+                                                             eigenvalues,
+                                                             factor.components_),
+                 CfFinisher.KEY_NAME: 'factors'}
 
     def _post_effect_output(self, output, field):
         values = list()
@@ -81,15 +92,15 @@ class CfExecutor(Filter):
 
         return values
 
-    def _prepare_data(self, key_list, corr_matrix):
+    def _prepare_data(self, key_list, eigenvalues, factors):
         result = {}
-        for key in key_list:
-            index = key_list.index(key)
-            result[key] = {}
+        result['eigenvalues'] = eigenvalues
+        result['factors'] = []
 
-            for val in corr_matrix[index]:
-                val_index = corr_matrix[index].index(val)
-                result[key][key_list[val_index]] = val
+        for factor in factors:
+            val = max(factor)
+            i = list(factor).index(val)
+            result['factors'].append(key_list[i])
 
         log.info(result)
         return result

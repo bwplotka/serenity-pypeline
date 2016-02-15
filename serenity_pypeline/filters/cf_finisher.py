@@ -41,35 +41,21 @@ class CfFinisher(Filter):
     def _insert_data(self, data_to_insert, measurement):
         result = []
         for name, data in data_to_insert.iteritems():
-            for key, val in data.iteritems():
-                if math.isnan(val):
-                    val = 0.00001
-                elif val == 0.0:
-                    val = 0.00001
+            json_record = self._create_record_json(measurement+'_'+name,
+                    data)
+            result.append(json_record)
 
-                json_record = self._create_record_json(
-                    measurement,
-                    name,
-                    key,
-                    val)
-                result.append(json_record)
         self._dbConnector.write_data(result)
 
-    def _create_record_json(self, measurement, name, tag, value):
-
-        name = name.replace('/', '_')
-        tag = tag.replace('/', '_')
+    def _create_record_json(self, measurement, data):
 
         record_json = {
             "measurement": measurement + '_' + self.node,
-            "tags": {
-                "corr_name": name,
-                "corr_with": tag
-            },
             "fields": {
-                "value": value
             }
         }
 
+        for i, val in enumerate(data):
+            record_json['fields']['f'+str(i+1)] = val
         return record_json
 
