@@ -49,10 +49,17 @@ class CfExecutor(Filter):
         values = list()
         # CF cannot count data from all 0 metrics.
         zeros = 0
+        last_value = 0
+        mismatches = 0
         for i in xrange(0, len(output)):
             output[i]['value'] = float(output[i]['value'])
             if i == 0:
+                last_value = output[i]['value']
                 continue
+            elif last_value != output[i]['value']:
+                mismatches += 1
+                last_value = output[i]['value']
+
 
             if field["cumulated"]:
                 output[i]['value'] -= output[i-1]['value']
@@ -67,6 +74,9 @@ class CfExecutor(Filter):
             values.append(output[i]['value'])
 
         if zeros >= (len(output)-2):
+            return list()
+
+        if mismatches < 2:
             return list()
 
         return values

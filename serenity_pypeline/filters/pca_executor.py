@@ -17,14 +17,16 @@ class PcaExecutor(Filter):
         data_to_test = kwargs[DATA_FIELD]
 
         spotted_length = -1
-        log.info('Counting PCA... from ' + str(len(data_to_test)) + " dimensions.")
         for key, val in data_to_test.iteritems():
             points = list(val[0].get_points())
-            if len(points) == 0:
+
+            values = self._post_effect_output(points, val[1])
+            if len(values) == 0:
                 log.error("No data points for measurement: " + str(key))
                 continue
-            values = self._post_effect_output(points, val[1])
+
             log.debug("Last value in series:" + str(values[-1]))
+
             log.info(str(key) + " has length " + str(len(values)))
             if spotted_length == -1:
                 spotted_length = len(values)
@@ -33,6 +35,8 @@ class PcaExecutor(Filter):
 
             input_matrix.append(values)
             key_list.append(key)
+
+        log.info('Counting PCA... from ' + str(len(key_list)) + " dimensions.")
 
         corr_matrix = np.corrcoef(input_matrix)
 
@@ -43,10 +47,18 @@ class PcaExecutor(Filter):
 
     def _post_effect_output(self, output, field):
         values = list()
+
+        last_value = 0
+        mismatches = 0
         for i in xrange(0, len(output)):
             output[i]['value'] = float(output[i]['value'])
             if i == 0:
+                last_value = output[i]['value']
                 continue
+            elif last_value != output[i]['value']:
+                mismatches += 1
+                last_value = output[i]['value']
+
 
             if field["cumulated"]:
                 output[i]['value'] -= output[i-1]['value']
@@ -58,6 +70,9 @@ class PcaExecutor(Filter):
                 output[i]['value'] = 1.0
 
             values.append(output[i]['value'])
+
+        if mismatches < 2:
+            return list()
 
         return values
 
